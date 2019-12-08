@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "rohinipwd"
+      MYSQL_DATABASE: "fundooNotes_db"
+    ports:
+      - "3307:3306"
+  web:
+    build : .
+    ports :
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - .:/code
+#    entrypoint: code/entrypoint.sh
+    command: bash -c " python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+      - redis
+
+  redis:
+    image: redis:3.2-alpine
+    restart: always
+    ports:
+      - "6380:6379"
+
+
+
+
+
